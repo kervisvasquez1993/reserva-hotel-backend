@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('inmueble_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->unsignedTinyInteger('estrellas');
+            $table->softDeletes();
             $table->timestamps();
 
         });

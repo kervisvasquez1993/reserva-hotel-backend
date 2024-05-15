@@ -17,10 +17,10 @@ Route::middleware('auth:api')->post('logout', [AuthController::class, 'logout'])
 
 Route::middleware('auth:api')->group(function () {
     Route::get('inmobiliarias', [InmobiliariaController::class, 'index']);
-    Route::get('inmobiliarias/{id}', [InmobiliariaController::class, 'show']);
+    Route::get('inmobiliarias/{inmobiliaria}', [InmobiliariaController::class, 'show']);
     Route::post('inmobiliarias', [InmobiliariaController::class, 'store']);
-    Route::put('inmobiliarias/{id}', [InmobiliariaController::class, 'update']);
-    Route::delete('inmobiliarias/{id}', [InmobiliariaController::class, 'destroy']);
+    Route::put('inmobiliarias/{inmobiliaria}', [InmobiliariaController::class, 'update']);
+    Route::delete('inmobiliarias/{inmobiliaria}', [InmobiliariaController::class, 'destroy']);
 });
 
 Route::get('inmuebles', [InmuebleController::class, 'index']);

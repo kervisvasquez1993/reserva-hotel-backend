@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('fecha_inicio');
             $table->timestamp('fecha_fin');
             $table->decimal('precio_total', 10, 2);
+            $table->softDeletes();
             $table->timestamps();
 
         });
