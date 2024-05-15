@@ -79,13 +79,11 @@ class InmobiliariaController extends Controller
      */
     public function destroy($inmobiliaria)
     {
-
         $inmobiliariaDelete = Inmobiliaria::find($inmobiliaria);
 
         if ($inmobiliariaDelete) {
             $nombreInmobiliaria = $inmobiliariaDelete->nombre;
             $inmobiliariaDelete->delete();
-
             return response()->json(['message' => 'Inmobiliaria ' . $nombreInmobiliaria . ' eliminada con éxito'], 200);
         } else {
             return response()->json(['message' => 'Inmobiliaria no encontrada'], 404);
