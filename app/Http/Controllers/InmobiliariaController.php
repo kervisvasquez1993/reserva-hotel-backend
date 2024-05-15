@@ -20,7 +20,9 @@ class InmobiliariaController extends Controller
      */
     public function store(Request $request)
     {
+
         try {
+            $user_id = auth()->user()->id;
             $request->validate([
                 'nombre' => 'required|string|max:255',
                 'direccion' => 'required|string|max:255',
@@ -28,6 +30,7 @@ class InmobiliariaController extends Controller
                 'telefono' => 'required|string|max:20',
             ]);
 
+            $request->merge(['user_id' => $user_id]);
             $inmobiliaria = Inmobiliaria::create($request->all());
 
             return response()->json(['message' => 'Inmobiliaria creada con éxito', 'data' => $inmobiliaria], 201);
@@ -52,12 +55,17 @@ class InmobiliariaController extends Controller
     public function update(Request $request, Inmobiliaria $inmobiliaria)
     {
         try {
+            $user_id = auth()->user()->id;
+            if ($user_id = !$inmobiliaria->user_id) {
+                return response()->json(['message' => 'No tienes permisos para editar esta inmobiliaria'], 403);
+            }
             $request->validate([
                 'nombre' => 'required|string|max:255',
                 'direccion' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:inmobiliarias,email,' . $inmobiliaria->id,
                 'telefono' => 'required|string|max:20',
             ]);
+            $request->merge(['user_id' => $user_id]);
 
             $inmobiliaria->update($request->only('nombre', 'direccion', 'email', 'telefono'));
 
