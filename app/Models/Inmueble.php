@@ -20,6 +20,7 @@ class Inmueble extends Model
         'destacado',
         'latitud',
         'longitud',
+        'status',
     ];
     public function inmobiliaria()
     {

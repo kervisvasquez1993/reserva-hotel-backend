@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('destacado')->default(false);
             $table->decimal('latitud', 9, 6)->nullable();
             $table->decimal('longitud', 9, 6)->nullable();
+            $table->string('status')->default('disponible');
             $table->softDeletes();
             $table->timestamps();
 
