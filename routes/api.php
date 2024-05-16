@@ -30,6 +30,7 @@ Route::get('inmuebles/{id}/upload-file', [InmuebleController::class, 'filesImage
 Route::middleware('auth:api')->group(function () {
     Route::post('inmuebles', [InmuebleController::class, 'store']);
     Route::post('inmuebles/{id}/upload-file', [InmuebleController::class, 'uploadFile']);
+    Route::post('inmuebles/{id}/generate-code', [InmuebleController::class, 'generateCode']);
     Route::put('inmuebles/{id}', [InmuebleController::class, 'update']);
     Route::delete('inmuebles/{id}', [InmuebleController::class, 'destroy']);
 });

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Resources\InmuebleResource;
 use App\Models\Inmobiliaria;
 use App\Models\Inmueble;
+use App\Jobs\DeleteExpiredCodeJobs;
 use App\Models\ImgInmueble;
+use App\Models\InmuebleCode;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 
@@ -20,6 +22,29 @@ class InmuebleController extends Controller
         }
         $calificaciones = $inmueble->calificaciones;
         return response()->json($calificaciones, Response::HTTP_OK);
+    }
+
+    public function generateCode($id)
+    {
+        $inmueble = Inmueble::find($id);
+        if (!$inmueble) {
+            return response()->json(['message' => 'Inmueble no encontrado'], 404);
+        }
+        $existingCode = InmuebleCode::where('inmueble_id', $id)
+                                    ->where('user_id', auth()->user()->id)
+                                    ->first();
+        if ($existingCode) {
+            return response()->json(['message' => 'Ya existe un código para este inmueble'], 400);
+        }
+        $code = rand(100000, 999999);
+        $inmuebleCode = InmuebleCode::create([
+            'inmueble_id' => $id,
+            'user_id' => auth()->user()->id,
+            'code' => $code
+        ]);
+        DeleteExpiredCodeJobs::dispatch($inmuebleCode)->delay(now()->addMinutes(3));
+    
+        return response()->json(['message' => 'Código generado con éxito', 'data' => $inmuebleCode], 200);
     }
 
     public function filesImagenes($id)
@@ -192,6 +217,29 @@ class InmuebleController extends Controller
     
         $inmuebleId = $inmueble->id;
         $inmueble->delete();
+    
+        return response()->json([
+            'message' => 'Inmueble eliminado con éxito',
+            'id' => $inmuebleId
+        ], 200);
+    }
+
+    public function destroyTotal($id)
+    {
+        $inmueble = Inmueble::find($id);
+    
+        if (!$inmueble) {
+            return response()->json(['message' => 'Inmueble no encontrado'], 404);
+        }
+    
+        $inmobiliaria_id = $inmueble->inmobiliaria->user_id;
+        $user_id = auth()->user()->id;
+        if ($user_id != $inmobiliaria_id) {
+            return response()->json(['message' => 'No tienes permisos para editar este inmueble'], 403);
+        }
+    
+        $inmuebleId = $inmueble->id;
+        $inmueble->forceDelete();
     
         return response()->json([
             'message' => 'Inmueble eliminado con éxito',
