@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('inmueble_id')->constrained('inmuebles');
             $table->string('url');
             $table->string('type');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

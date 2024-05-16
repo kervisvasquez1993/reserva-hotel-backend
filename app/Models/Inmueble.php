@@ -31,6 +31,11 @@ class Inmueble extends Model
         return $this->hasMany(Calificacion::class);
     }
 
+    public function filesImg()
+    {
+        return $this->hasMany(ImgInmueble::class);
+    }
+
     public function ventas()
     {
         return $this->hasMany(Venta::class);

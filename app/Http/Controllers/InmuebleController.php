@@ -22,6 +22,17 @@ class InmuebleController extends Controller
         return response()->json($calificaciones, Response::HTTP_OK);
     }
 
+    public function filesImagenes($id)
+    {
+        $inmueble = Inmueble::find($id);
+        if (!$inmueble) {
+            return response()->json(['message' => 'Inmueble no encontrado'], 404);
+        }
+    
+        $files = $inmueble->filesImg;
+        return response()->json($files, Response::HTTP_OK);
+    }
+
     public function uploadFile(Request $request, $id){
         $inmueble = Inmueble::find($id);
         if (!$inmueble) {
