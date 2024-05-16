@@ -10,6 +10,16 @@ use Illuminate\Http\Request;
 
 class InmuebleController extends Controller
 {
+
+    public function calificaciones($id)
+    {
+        $inmueble = Inmueble::find($id);
+        if (!$inmueble) {
+            return response()->json(['message' => 'Inmueble no encontrado'], 404);
+        }
+        $calificaciones = $inmueble->calificaciones;
+        return response()->json($calificaciones, Response::HTTP_OK);
+    }
     /**
      * Display a listing of the resource.
      */

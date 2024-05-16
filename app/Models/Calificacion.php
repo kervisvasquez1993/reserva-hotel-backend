@@ -13,6 +13,7 @@ class Calificacion extends Model
         'inmueble_id',
         'user_id',
         'estrellas',
+        'comentarios',
     ];
 
     public function inmueble()
