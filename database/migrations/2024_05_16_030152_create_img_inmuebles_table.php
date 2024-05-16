@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('img_inmuebles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('inmueble_id')->constrained('inmuebles');
+            $table->string('url');
+            $table->string('type');
             $table->timestamps();
         });
     }

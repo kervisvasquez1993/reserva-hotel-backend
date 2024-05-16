@@ -28,6 +28,7 @@ Route::get('inmuebles/{id}', [InmuebleController::class, 'show']);
 Route::get('inmuebles/{id}/calificaciones', [InmuebleController::class, 'calificaciones']);
 Route::middleware('auth:api')->group(function () {
     Route::post('inmuebles', [InmuebleController::class, 'store']);
+    Route::post('inmuebles/{id}/upload-file', [InmuebleController::class, 'uploadFile']);
     Route::put('inmuebles/{id}', [InmuebleController::class, 'update']);
     Route::delete('inmuebles/{id}', [InmuebleController::class, 'destroy']);
 });
