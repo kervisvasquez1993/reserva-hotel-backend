@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->text('descripcion');
             $table->decimal('precio', 10, 2);
+            $table->decimal('precio_venta', 10, 2);
             $table->string('direccion');
             $table->string('imagen')->nullable();
             $table->string('video_url')->nullable();

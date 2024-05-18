@@ -66,7 +66,6 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
-        $user->role = $request->role;
 
         $user->save();
         return response()->json(['message' => "Hola, $user->name tu registro fue completado"], 201);

@@ -14,6 +14,7 @@ class Inmueble extends Model
         'nombre',
         'descripcion',
         'precio',
+        'precio_venta',
         'direccion',
         'imagen',
         'video_url',

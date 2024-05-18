@@ -31,8 +31,8 @@ class InmuebleController extends Controller
             return response()->json(['message' => 'Inmueble no encontrado'], 404);
         }
         $existingCode = InmuebleCode::where('inmueble_id', $id)
-                                    ->where('user_id', auth()->user()->id)
-                                    ->first();
+            ->where('user_id', auth()->user()->id)
+            ->first();
         if ($existingCode) {
             return response()->json(['message' => 'Ya existe un código para este inmueble'], 400);
         }
@@ -43,7 +43,7 @@ class InmuebleController extends Controller
             'code' => $code
         ]);
         DeleteExpiredCodeJobs::dispatch($inmuebleCode)->delay(now()->addMinutes(3));
-    
+
         return response()->json(['message' => 'Código generado con éxito', 'data' => $inmuebleCode], 200);
     }
 
@@ -53,43 +53,43 @@ class InmuebleController extends Controller
         if (!$inmueble) {
             return response()->json(['message' => 'Inmueble no encontrado'], 404);
         }
-    
+
         $files = $inmueble->filesImg;
         return response()->json($files, Response::HTTP_OK);
     }
 
-    public function uploadFile(Request $request, $id){
+    public function uploadFile(Request $request, $id)
+    {
         $inmueble = Inmueble::find($id);
         if (!$inmueble) {
             return response()->json(['message' => 'Inmueble no encontrado'], 404);
         }
 
-        try{
-        $request->validate([
-            'type' => 'required|string|in:youtube,upload-video,imagen',
-            'url' => 'required_if:type,youtube',
-             'img_file' => 'required_if:type,upload-video,imagen|file|max:10240|mimes:mp4,jpg,jpeg,png', // max 10MB
-        ]);
-        $type = $request->input('type');
-        if ($type == 'youtube') {
-            $url = $request->input('url');
-        } else {
-            $file = $request->file("img_file");
-            $path = $file->storePublicly("public/imagen", 's3');
-            $url = "https://my-bucket-img-laravel-kervis.s3.amazonaws.com/" . $path;
+        try {
+            $request->validate([
+                'type' => 'required|string|in:youtube,upload-video,imagen',
+                'url' => 'required_if:type,youtube',
+                'img_file' => 'required_if:type,upload-video,imagen|file|max:10240|mimes:mp4,jpg,jpeg,png', // max 10MB
+            ]);
+            $type = $request->input('type');
+            if ($type == 'youtube') {
+                $url = $request->input('url');
+            } else {
+                $file = $request->file("img_file");
+                $path = $file->storePublicly("public/imagen", 's3');
+                $url = "https://my-bucket-img-laravel-kervis.s3.amazonaws.com/" . $path;
+            }
+
+            $imgInmueble = ImgInmueble::create([
+                'inmueble_id' => $id,
+                'url' => $url,
+                'type' => $type
+            ]);
+
+            return response()->json(['message' => 'Archivo subido con éxito', 'data' => $imgInmueble], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['message' => $e->validator->errors()], 400);
         }
-    
-        $imgInmueble = ImgInmueble::create([
-            'inmueble_id' => $id,
-            'url' => $url,
-            'type' => $type
-        ]);
-    
-        return response()->json(['message' => 'Archivo subido con éxito', 'data' => $imgInmueble], 200);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json(['message' => $e->validator->errors()], 400);
-    }
-    
     }
     /**
      * Display a listing of the resource.
@@ -123,8 +123,9 @@ class InmuebleController extends Controller
                 'nombre' => 'required|string|max:255',
                 'descripcion' => 'required|string',
                 'precio' => 'required|numeric',
+                'precio_venta' => 'required|numeric',
                 'direccion' => 'required|string|max:255',
-                'imagen' => 'required|string',
+                'imagen' => 'required||file|max:10240|mimes:mp4,jpg,jpeg,png',
                 'video_url' => 'required|string',
                 'destacado' => 'required|boolean',
                 'latitud' => 'required|numeric',
@@ -134,6 +135,10 @@ class InmuebleController extends Controller
             if (!Inmobiliaria::find($inmobiliaria_id)) {
                 return response()->json(['message' => 'Inmobiliaria no encontrada'], 404);
             }
+
+            $file = $request->file("imagen");
+            $path = $file->storePublicly("public/imagen", 's3');
+            $url = "https://my-bucket-img-laravel-kervis.s3.amazonaws.com/" . $path;
 
             $inmueble = Inmueble::create(array_merge($request->all(), ['inmobiliaria_id' => $inmobiliaria_id]));
 
@@ -146,17 +151,17 @@ class InmuebleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show( $id)
+    public function show($id)
     {
         $inmueble = Inmueble::find($id);
-    
+
         if (!$inmueble) {
             return response()->json(['message' => 'Inmueble no encontrado'], 404);
         }
         return $inmueble;
     }
 
-  
+
 
     /**
      * Update the specified resource in storage.
@@ -164,7 +169,7 @@ class InmuebleController extends Controller
     public function update(Request $request, $id)
     {
         $inmuebles = Inmueble::find($id);
-    
+
         if (!$inmuebles) {
             return response()->json(['message' => 'Inmueble no encontrado'], 404);
         }
@@ -204,20 +209,20 @@ class InmuebleController extends Controller
     public function destroy($id)
     {
         $inmueble = Inmueble::find($id);
-    
+
         if (!$inmueble) {
             return response()->json(['message' => 'Inmueble no encontrado'], 404);
         }
-    
+
         $inmobiliaria_id = $inmueble->inmobiliaria->user_id;
         $user_id = auth()->user()->id;
         if ($user_id != $inmobiliaria_id) {
             return response()->json(['message' => 'No tienes permisos para editar este inmueble'], 403);
         }
-    
+
         $inmuebleId = $inmueble->id;
         $inmueble->delete();
-    
+
         return response()->json([
             'message' => 'Inmueble eliminado con éxito',
             'id' => $inmuebleId
@@ -227,25 +232,23 @@ class InmuebleController extends Controller
     public function destroyTotal($id)
     {
         $inmueble = Inmueble::find($id);
-    
+
         if (!$inmueble) {
             return response()->json(['message' => 'Inmueble no encontrado'], 404);
         }
-    
+
         $inmobiliaria_id = $inmueble->inmobiliaria->user_id;
         $user_id = auth()->user()->id;
         if ($user_id != $inmobiliaria_id) {
             return response()->json(['message' => 'No tienes permisos para editar este inmueble'], 403);
         }
-    
+
         $inmuebleId = $inmueble->id;
         $inmueble->forceDelete();
-    
+
         return response()->json([
             'message' => 'Inmueble eliminado con éxito',
             'id' => $inmuebleId
         ], 200);
     }
-
-  
 }
