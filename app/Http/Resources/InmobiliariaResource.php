@@ -20,6 +20,7 @@ class InmobiliariaResource extends JsonResource
             'direccion' => $this->direccion,
             'telefono' => $this->telefono,
             'email' => $this->email,
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

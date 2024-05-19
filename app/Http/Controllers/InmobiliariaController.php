@@ -15,6 +15,13 @@ class InmobiliariaController extends Controller
     {
         return Inmobiliaria::all();
     }
+
+    public function listForImobiliaria()
+    {
+        $inmobiliariasForUser = auth()->user()->inmobiliarias;
+        return $inmobiliariasForUser;
+        // return Inmobiliaria::where('user_id', $user_id)->get();
+    }
     /**
      * Store a newly created resource in storage.
      */

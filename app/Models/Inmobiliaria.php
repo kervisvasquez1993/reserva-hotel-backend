@@ -8,13 +8,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Inmobiliaria extends Model
 {
-    use HasFactory, SoftDeletes ;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'nombre',
         'direccion',
+        'status',
         'email',
         'telefono',
         'user_id'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

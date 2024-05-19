@@ -46,4 +46,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function inmobiliarias()
+    {
+        return $this->hasMany(Inmobiliaria::class);
+    }
 }

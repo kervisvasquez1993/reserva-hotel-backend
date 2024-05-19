@@ -17,6 +17,7 @@ Route::middleware('auth:api')->post('logout', [AuthController::class, 'logout'])
 
 Route::middleware('auth:api')->group(function () {
     Route::get('inmobiliarias', [InmobiliariaController::class, 'index']);
+    Route::get('list-for-user-inmobiliarias', [InmobiliariaController::class, 'listForImobiliaria']);
     Route::get('inmobiliarias/{inmobiliaria}', [InmobiliariaController::class, 'show']);
     Route::post('inmobiliarias', [InmobiliariaController::class, 'store']);
     Route::put('inmobiliarias/{inmobiliaria}', [InmobiliariaController::class, 'update']);

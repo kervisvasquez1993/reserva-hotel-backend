@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('direccion');
             $table->string('email')->unique();
             $table->string('telefono');
+            $table->boolean('status')->default(false);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
