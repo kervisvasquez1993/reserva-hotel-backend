@@ -11,9 +11,47 @@ class InmobiliariaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inmobiliaria::all();
+        if (auth()->user()->role !== 'admin') {
+            return response()->json(['message' => 'No tienes permisos para realizar esta acción'], 403);
+        }
+
+        $query = Inmobiliaria::query();
+
+        if ($request->has('status')) {
+            $status = $request->query('status');
+            if ($status === 'true') {
+                $query->where('status', true);
+            } elseif ($status === 'false') {
+                $query->where('status', false);
+            }
+        }
+
+        $inmobiliarias = $query->get();
+
+        return response()->json($inmobiliarias, 200);
+    }
+
+    public function
+
+    toggleStatus($inmobiliaria)
+    {
+
+        if (auth()->user()->role !== 'admin') {
+            return response()->json(['message' => 'No tienes permisos para realizar esta acción'], 403);
+        }
+
+        $inmobiliaria = Inmobiliaria::find($inmobiliaria);
+
+        if (!$inmobiliaria) {
+            return response()->json(['message' => 'Inmobiliaria no encontrada'], 404);
+        }
+
+        $inmobiliaria->status = !$inmobiliaria->status;
+        $inmobiliaria->save();
+
+        return response()->json(['message' => 'Estado de inmobiliaria actualizado con éxito', 'data' => $inmobiliaria], 200);
     }
 
     public function listForImobiliaria()
@@ -51,7 +89,7 @@ class InmobiliariaController extends Controller
      */
     public function show(Inmobiliaria $inmobiliaria)
     {
-        return $inmobiliaria;
+        return response()->json(['data' => $inmobiliaria], 200);
     }
 
 
