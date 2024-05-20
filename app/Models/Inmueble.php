@@ -28,6 +28,11 @@ class Inmueble extends Model
         return $this->belongsTo(Inmobiliaria::class);
     }
 
+
+    public function typeinmueble()
+    {
+        return $this->belongsTo(TypeOfInmuebles::class);
+    }
     public function calificaciones()
     {
         return $this->hasMany(Calificacion::class);

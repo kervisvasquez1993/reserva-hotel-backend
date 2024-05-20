@@ -59,38 +59,44 @@ class InmuebleController extends Controller
     }
 
     public function uploadFile(Request $request, $id)
-    {
-        $inmueble = Inmueble::find($id);
-        if (!$inmueble) {
-            return response()->json(['message' => 'Inmueble no encontrado'], 404);
-        }
-
-        try {
-            $request->validate([
-                'type' => 'required|string|in:youtube,upload-video,imagen',
-                'url' => 'required_if:type,youtube',
-                'img_file' => 'required_if:type,upload-video,imagen|file|max:10240|mimes:mp4,jpg,jpeg,png', // max 10MB
-            ]);
-            $type = $request->input('type');
-            if ($type == 'youtube') {
-                $url = $request->input('url');
-            } else {
-                $file = $request->file("img_file");
-                $path = $file->storePublicly("public/imagen", 's3');
-                $url = "https://my-bucket-img-laravel-kervis.s3.amazonaws.com/" . $path;
-            }
-
-            $imgInmueble = ImgInmueble::create([
-                'inmueble_id' => $id,
-                'url' => $url,
-                'type' => $type
-            ]);
-
-            return response()->json(['message' => 'Archivo subido con éxito', 'data' => $imgInmueble], 200);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['message' => $e->validator->errors()], 400);
-        }
+{
+    $inmueble = Inmueble::find($id);
+    if (!$inmueble) {
+        return response()->json(['message' => 'Inmueble no encontrado'], 404);
     }
+
+    try {
+        $request->validate([
+            'type' => 'required|string|in:youtube,upload-video,imagen',
+            'url' => 'required_if:type,youtube',
+            'img_file' => 'required_if:type,upload-video,imagen|file|max:10240|mimes:mp4,jpg,jpeg,png', // max 10MB
+        ]);
+        $type = $request->input('type');
+        if ($type == 'youtube') {
+            $url = $request->input('url');
+        } else {
+            $file = $request->file("img_file");
+            if (!$file) {
+                return response()->json(['message' => 'No se pudo cargar el archivo'], 400);
+            }
+            $path = $file->storePublicly("public/imagen", 's3');
+            if (!$path) {
+                return response()->json(['message' => 'No se pudo almacenar el archivo'], 400);
+            }
+            $url = "https://my-bucket-img-laravel-kervis.s3.amazonaws.com/" . $path;
+        }
+
+        $imgInmueble = ImgInmueble::create([
+            'inmueble_id' => $id,
+            'url' => $url,
+            'type' => $type
+        ]);
+
+        return response()->json(['message' => 'Archivo subido con éxito', 'data' => $imgInmueble], 200);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json(['message' => $e->validator->errors()], 400);
+    }
+}
     /**
      * Display a listing of the resource.
      */
@@ -116,11 +122,9 @@ class InmuebleController extends Controller
     }
     public function store(Request $request)
     {
-
         try {
-
             $request->validate([
-                'inmobiliaria_id' => 'required',
+                'inmobiliaria_id' => 'required|exists:inmobiliarias,id',
                 'type_of_inmueble_id' =>  'required',
                 'nombre' => 'required|string|max:255',
                 'descripcion' => 'required|string',
@@ -130,8 +134,8 @@ class InmuebleController extends Controller
                 'destacado' => 'required|boolean',
                 'latitud' => 'required|numeric',
                 'longitud' => 'required|numeric',
+               
             ]);
-
             $file = $request->file("imagen");
             $path = $file->storePublicly("public/imagen", 's3');
             $url = "https://my-bucket-img-laravel-kervis.s3.amazonaws.com/" . $path;

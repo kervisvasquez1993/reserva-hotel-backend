@@ -5,6 +5,8 @@ use App\Http\Controllers\CalificacionController;
 use App\Http\Controllers\InmobiliariaController;
 use App\Http\Controllers\InmuebleController;
 use App\Http\Controllers\RentaController;
+use App\Http\Controllers\TipoInmuebleController;
+use App\Http\Controllers\TypeOfInmueblesController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::middleware('auth:api')->post('logout', [AuthController::class, 'logout']);
+
+
+Route::get('tipos-venta-inmuebles', [TypeOfInmueblesController::class, 'index']);
+Route::get('tipos-inmuebles', [TipoInmuebleController::class, 'index']);
+
 
 Route::middleware('auth:api')->group(function () {
     Route::get('inmobiliarias', [InmobiliariaController::class, 'index']);
