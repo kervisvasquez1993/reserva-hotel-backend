@@ -67,8 +67,8 @@ class InmobiliariaController extends Controller
     public function listForImobiliariaAprobadas()
     {
         $user = auth()->user();
-        $inmobiliariasForUser = $user->inmobiliarias->where('status', true);
-        return $inmobiliariasForUser;
+        $inmobiliariasForUser = $user->inmobiliarias()->where('status', true)->get()->values();
+        return response()->json($inmobiliariasForUser, 200);
     }
     /**
      * Store a newly created resource in storage.
