@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('inmuebles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('inmobiliaria_id')->constrained()->onDelete('cascade');
+            $table->foreignId('type_of_inmueble_id')->constrained()->onDelete('cascade');
             $table->string('nombre');
             $table->text('descripcion');
             $table->decimal('precio', 10, 2);

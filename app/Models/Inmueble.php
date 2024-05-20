@@ -11,13 +11,13 @@ class Inmueble extends Model
     use HasFactory, SoftDeletes ;
     protected $fillable = [
         'inmobiliaria_id',
+        'type_of_inmueble_id',
+        'tipo_inmueble',
         'nombre',
         'descripcion',
         'precio',
-        'precio_venta',
         'direccion',
         'imagen',
-        'video_url',
         'destacado',
         'latitud',
         'longitud',

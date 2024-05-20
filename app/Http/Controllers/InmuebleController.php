@@ -118,30 +118,24 @@ class InmuebleController extends Controller
     {
 
         try {
-            $inmobiliaria_id = $request->query('inmobiliarias');
+
             $request->validate([
+                'inmobiliaria_id' => 'required',
+                'type_of_inmueble_id' =>  'required',
                 'nombre' => 'required|string|max:255',
                 'descripcion' => 'required|string',
                 'precio' => 'required|numeric',
-                'precio_venta' => 'required|numeric',
                 'direccion' => 'required|string|max:255',
                 'imagen' => 'required||file|max:10240|mimes:mp4,jpg,jpeg,png',
-                'video_url' => 'required|string',
                 'destacado' => 'required|boolean',
                 'latitud' => 'required|numeric',
                 'longitud' => 'required|numeric',
             ]);
 
-            if (!Inmobiliaria::find($inmobiliaria_id)) {
-                return response()->json(['message' => 'Inmobiliaria no encontrada'], 404);
-            }
-
             $file = $request->file("imagen");
             $path = $file->storePublicly("public/imagen", 's3');
             $url = "https://my-bucket-img-laravel-kervis.s3.amazonaws.com/" . $path;
-
-            $inmueble = Inmueble::create(array_merge($request->all(), ['inmobiliaria_id' => $inmobiliaria_id]));
-
+            $inmueble = Inmueble::create(array_merge($request->all(), ['imagen' => $url]));
             return response()->json(['message' => 'Inmueble creado con éxito', 'data' => $inmueble], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['message' => $e->validator->errors()], 400);

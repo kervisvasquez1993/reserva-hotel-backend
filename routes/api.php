@@ -21,6 +21,9 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('inmobiliarias-toggle/{inmobiliaria}', [InmobiliariaController::class, 'toggleStatus']);
 
     Route::get('list-for-user-inmobiliarias', [InmobiliariaController::class, 'listForImobiliaria']);
+    Route::get('list-for-imobiliaria-aprobadas', [InmobiliariaController::class, 'listForImobiliariaAprobadas']);
+
+    
     Route::get('inmobiliarias/{inmobiliaria}', [InmobiliariaController::class, 'show']);
     Route::post('inmobiliarias', [InmobiliariaController::class, 'store']);
     Route::put('inmobiliarias/{inmobiliaria}', [InmobiliariaController::class, 'update']);

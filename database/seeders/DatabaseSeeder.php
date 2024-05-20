@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\TipoInmueble;
+use App\Models\TypeOfInmuebles;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,5 +24,16 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
+        
+
+        TypeOfInmuebles::create(['name' => 'alquilar']);
+        TypeOfInmuebles::create(['name' => 'venta']);
+
+        TipoInmueble::create(['name' => 'casa']);
+        TipoInmueble::create(['name' => 'apartamento']);
+        TipoInmueble::create(['name' => 'anexo']);
+        TipoInmueble::create(['name' => 'oficina']);
+        TipoInmueble::create(['name' => 'local comercial']);
+
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inmobiliaria;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
@@ -33,11 +34,8 @@ class InmobiliariaController extends Controller
         return response()->json($inmobiliarias, 200);
     }
 
-    public function
-
-    toggleStatus($inmobiliaria)
+    public function toggleStatus($inmobiliaria)
     {
-
         if (auth()->user()->role !== 'admin') {
             return response()->json(['message' => 'No tienes permisos para realizar esta acción'], 403);
         }
@@ -51,14 +49,26 @@ class InmobiliariaController extends Controller
         $inmobiliaria->status = !$inmobiliaria->status;
         $inmobiliaria->save();
 
+        $user = User::find($inmobiliaria->user_id);
+
+        if ($user->role == 'client' && $inmobiliaria->status == true) {
+            $user->update(["role" => 'vendedor']);
+        }
+
         return response()->json(['message' => 'Estado de inmobiliaria actualizado con éxito', 'data' => $inmobiliaria], 200);
     }
-
     public function listForImobiliaria()
     {
         $inmobiliariasForUser = auth()->user()->inmobiliarias;
         return $inmobiliariasForUser;
         // return Inmobiliaria::where('user_id', $user_id)->get();
+    }
+
+    public function listForImobiliariaAprobadas()
+    {
+        $user = auth()->user();
+        $inmobiliariasForUser = $user->inmobiliarias->where('status', true);
+        return $inmobiliariasForUser;
     }
     /**
      * Store a newly created resource in storage.
